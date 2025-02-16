@@ -1,6 +1,8 @@
 import math
 from decimal import Decimal
 from matplotlib import pyplot as plt
+from tkinter import *
+from tkinter.font import Font, BOLD
 
 class Wave:
     def __init__(self, a: float, l: float, u2: float, t: float, u1=1.0) -> None:
@@ -11,7 +13,7 @@ class Wave:
 
 class IPolLig:
     def __init__(self, l: float, u1: float, u2: float, t=100.0, u=1.0, p=5000) -> None:
-        if l <= 0 or u1 > u2 or t <= 0 or u1 <= 0 or u2 <= 0 or u <= 0 or p <= 0:
+        if (l:=float(l)) <= 0 or float(u1) > float(u2) or (t:=float(t)) <= 0 or (u1:=float(u1)) <= 0 or (u2:=float(u2)) <= 0 or (u:=float(u)) <= 0 or (p:=int(p)) <= 0:
             print("Invalid argument: l > 0 / u1 < u2 / t > 0 / u, u1, u2 > 0 / p > 0\n")
         self.ord = Wave(Decimal('2') ** Decimal('-0.5'), l, u1, t, u)
         self.exord = Wave(Decimal('2') ** Decimal('-0.5'), l, u2, t, u)
@@ -69,3 +71,100 @@ class IPolLig:
         p.set_zlabel("Direction of Propagation")
         plt.show()
 
+
+root = Tk()
+root.geometry("480x480")
+root.title("Polarized light visualization")
+
+var_l = StringVar(root, value="447");
+var_u1 = StringVar(root, value="1.3");
+var_u2 = StringVar(root, value="1.4");
+var_t = StringVar(root, value="100.0");
+var_u = StringVar(root, value="1.0");
+var_p = StringVar(root, value="5000");
+
+frame = Frame(root, pady=20)
+font = Font(root, size=16, weight=BOLD)
+font_normal = Font(frame, size=16)
+
+label_l = Label(frame, text="wavelength (nm)", padx=5, pady=2.5, font=font)
+label_u1 = Label(frame, text="rf 1", padx=5, pady=2.5, font=font)
+label_u2 = Label(frame, text="rf 2", padx=5, pady=2.5, font=font)
+label_t = Label(frame, text="thickness (nm)", padx=5, pady=2.5, font=font)
+label_u = Label(frame, text="rf outside", padx=5, pady=2.5, font=font)
+label_p = Label(frame, text="number of points", padx=5, pady=2.5, font=font)
+
+entry_l = Entry(frame, textvariable=var_l, font=font_normal)
+entry_u1 = Entry(frame, textvariable=var_u1, font=font_normal)
+entry_u2 = Entry(frame, textvariable=var_u2, font=font_normal)
+entry_t = Entry(frame, textvariable=var_t, font=font_normal)
+entry_u = Entry(frame, textvariable=var_u, font=font_normal)
+entry_p = Entry(frame, textvariable=var_p, font=font_normal)
+
+label_l.grid(row=0, column=0)
+entry_l.grid(row=0, column=1)
+label_u1.grid(row=1, column=0)
+entry_u1.grid(row=1, column=1)
+label_u2.grid(row=2, column=0)
+entry_u2.grid(row=2, column=1)
+label_t.grid(row=3, column=0)
+entry_t.grid(row=3, column=1)
+label_u.grid(row=4, column=0)
+entry_u.grid(row=4, column=1)
+label_p.grid(row=5, column=0)
+entry_p.grid(row=5, column=1)
+
+frame.pack()
+
+frame_button = Frame(root, pady=20)
+frame_visualize = Frame(root, pady=20)
+
+calculated = False;
+obj = None;
+
+def calculate():
+    global obj, calculated
+    try:
+        obj = IPolLig(var_l.get(), var_u1.get(), var_u2.get(), var_t.get(), var_u.get(), var_p.get())
+        if obj is not None:
+            calculated = True
+        else:
+            calculated = False
+        change_buttons()
+    except Exception as e:
+        calculated = False
+        change_buttons()
+
+def change_buttons():
+    global calculate, calculated, obj, frame_visualize, frame_button
+    try:
+        frame_button.destroy()
+    except:
+        pass
+    try:
+        frame_visualize.destroy()
+    except:
+        pass
+    frame_button = Frame(root, pady=20)
+    frame_visualize = Frame(root, pady=20)
+    if calculated:
+        frame_button.destroy();
+        button = Button(frame_visualize, bg="blue", activebackground="blue", activeforeground="white", fg="white", text="Calculate", font=font, command=calculate)
+        button.pack()
+        button_plot_interference = Button(frame_visualize, bg="blue", activebackground="blue", activeforeground="white", fg="white", text="Plot graph", font=font, command=obj.plotintrf)
+        button_plot_wave = Button(frame_visualize, bg="blue", activebackground="blue", activeforeground="white", fg="white", text="Plot wave", font=font, command=obj.plotintrfwave)
+        button_plot_interference.pack()
+        button_plot_wave.pack()
+        frame_visualize.pack()
+    else:
+        frame_visualize.destroy()
+        button = Button(frame_button, bg="blue", activebackground="blue", activeforeground="white", fg="white", text="Calculate", font=font, command=calculate)
+        button.pack()
+        frame_button.pack()
+
+button = Button(frame_button, bg="blue", activebackground="blue", activeforeground="white", fg="white", text="Calculate", font=font, command=calculate)
+button.pack()
+
+frame_button.pack()
+
+root.mainloop();
