@@ -88,10 +88,10 @@ font = Font(root, size=16, weight=BOLD)
 font_normal = Font(frame, size=16)
 
 label_l = Label(frame, text="wavelength (nm)", padx=5, pady=2.5, font=font)
-label_u1 = Label(frame, text="rf 1", padx=5, pady=2.5, font=font)
-label_u2 = Label(frame, text="rf 2", padx=5, pady=2.5, font=font)
+label_u1 = Label(frame, text="R.I. 1", padx=5, pady=2.5, font=font)
+label_u2 = Label(frame, text="R.I. 2", padx=5, pady=2.5, font=font)
 label_t = Label(frame, text="thickness (nm)", padx=5, pady=2.5, font=font)
-label_u = Label(frame, text="rf outside", padx=5, pady=2.5, font=font)
+label_u = Label(frame, text="R.I. outside", padx=5, pady=2.5, font=font)
 label_p = Label(frame, text="number of points", padx=5, pady=2.5, font=font)
 
 entry_l = Entry(frame, textvariable=var_l, font=font_normal)
